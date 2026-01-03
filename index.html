@@ -1,0 +1,180 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz kawaii para Lauluphine 🌸</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/img/botton.jpg">
+  <style>
+    /* Centered Alexis button when shown at the end */
+    .alexis-btn.center{ position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:150; width:220px; padding:12px; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,0.12); animation: popIn .45s ease; }
+    @keyframes popIn{ from{ transform: translate(-50%,-50%) scale(.92); opacity:0 } to{ transform: translate(-50%,-50%) scale(1); opacity:1 } }
+
+    /* Floating particle effects for correct/wrong answers */
+    .particle{ position:fixed; pointer-events:none; font-size:22px; will-change:transform,opacity; animation: floatUp 1.6s linear forwards; }
+    .particle.heart{ color:#ff7ab6; text-shadow:0 2px 6px rgba(255,122,182,0.35); }
+    .particle.sad{ color:#7aa0ff; text-shadow:0 2px 6px rgba(122,160,255,0.2); }
+    @keyframes floatUp{ 0%{ transform:translateY(30px) scale(.9) rotate(0deg); opacity:0 } 10%{ opacity:1 } 100%{ transform:translateY(-220px) translateX(var(--tx,0px)) rotate(360deg) scale(1.1); opacity:0 } }
+
+    /* Win pet animations and sparkles */
+    .win-characters{ display:flex; gap:18px; justify-content:center; align-items:flex-end; margin-top:10px }
+    .win-pet-wrap{ position:relative; width:120px; height:120px; display:inline-block }
+    .win-pet{ width:100%; height:auto; transition:transform .8s ease; display:block }
+    .win-pet.celebrate{ animation: petBounce 1.2s cubic-bezier(.2,.9,.3,1) infinite; transform-origin:center bottom; }
+    @keyframes petBounce{ 0%{ transform:translateY(0) } 40%{ transform:translateY(-18px) } 70%{ transform:translateY(-8px) } 100%{ transform:translateY(0) } }
+    .pet-sparkles{ width:100%; height:100%; position:absolute; top:-10px; left:-10px; pointer-events:none; overflow:visible }
+    .pet-sparkles::after{ content:"✨"; position:absolute; right:-10px; top:-10px; font-size:22px; opacity:0; animation: sparkle 1.8s linear infinite }
+    @keyframes sparkle{ 0%{ opacity:0; transform:scale(.5) } 30%{ opacity:1; transform:scale(1) } 100%{ opacity:0; transform:scale(.8) } }
+
+    /* Intro overlay */
+    .intro-overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(255,245,250,0.98), rgba(255,240,245,0.96)); z-index:120; padding:24px }
+    .intro-card{ text-align:center; max-width:520px; background:rgba(255,255,255,0.9); border-radius:18px; padding:22px; box-shadow:0 12px 40px rgba(255,115,173,0.08); animation:introCardIn .5s ease both }
+    @keyframes introCardIn{ from{ transform:translateY(8px) scale(.98); opacity:0 } to{ transform:translateY(0) scale(1); opacity:1 } }
+    .intro-pets{ display:flex; gap:16px; justify-content:center; margin-bottom:8px }
+    .intro-pet{ width:86px; filter:drop-shadow(0 8px 18px rgba(255,105,180,0.06)); transition:transform .6s ease }
+    .intro-pet.pop{ animation: petPop .9s cubic-bezier(.2,.9,.3,1) both }
+    .intro-pet.float{ animation: petFloat 2.8s ease-in-out infinite }
+    .intro-pets.start-celebrate .intro-pet{ animation: petCelebrate .9s cubic-bezier(.2,.9,.3,1) both }
+    .intro-pet.alexis{ width:96px }
+
+    @keyframes petPop{ 0%{ transform:scale(.6) translateY(6px); opacity:0 } 60%{ transform:scale(1.06) translateY(-6px); opacity:1 } 100%{ transform:scale(1) translateY(0) } }
+    @keyframes petFloat{ 0%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } 100%{ transform:translateY(0) } }
+    @keyframes petCelebrate{ 0%{ transform:scale(1) translateY(0) } 40%{ transform:scale(1.06) translateY(-18px) } 70%{ transform:scale(1.04) translateY(-8px) } 100%{ transform:scale(1) translateY(0) } }
+
+    .intro-text{ color:var(--muted); margin:10px 0 16px; font-size:0.98rem }
+    .intro-card .btn.primary{ background:linear-gradient(90deg,#ffb3d6,#ff8ace); color:white; padding:10px 18px; border-radius:12px; font-weight:700 }
+
+    /* small helper: hide intro */
+    .intro-overlay.hidden{ display:none }
+
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main" aria-labelledby="title">
+    <header>
+      <div>
+        <div class="title" id="title">Quiz para <span class="accent">Lauluphine</span> 🌸</div>
+        <div class="subtitle">Dulce, tierno y divertido — ¡juega con Botton y Bao!</div>
+      </div>
+      <div class="mascots" aria-hidden="true">
+        <img src="assets/img/botton.jpg" class="mascot-img" alt="Botton (pug)">
+        <img src="assets/img/bao.jpg" class="mascot-img" alt="Bao (hámster)">
+        <button id="alexisHug" class="alexis-btn hidden" title="Abrazar a Alexis" aria-pressed="false" aria-hidden="true">
+          <img src="assets/img/alexis.jpg" alt="Alexis" class="mascot-img" />
+          <div style="display:flex; flex-direction:column; align-items:flex-start">
+            <span class="alexis-label">Abrazar a Alexis</span>
+            <span id="alexisPrompt" class="alexis-prompt" style="display:none">¿Quieres una ayuda?</span>
+          </div>
+        </button>
+      </div>
+    </header>
+
+    <!-- Intro overlay before starting the quiz -->
+    <div id="introOverlay" class="intro-overlay">
+      <div class="intro-card">
+        <div class="intro-pets">
+          <img src="assets/img/botton.jpg" alt="Botton" class="intro-pet">
+          <img src="assets/img/bao.jpg" alt="Bao" class="intro-pet">
+          <img src="assets/img/alexis.jpg" alt="Alexis" class="intro-pet alexis">
+        </div>
+        <h2>¡Hola, Lauluphine! 🌸</h2>
+        <p class="intro-text">Botton, Bao y Alexis te acompañarán en esta pequeña aventura creada especialmente para ti. Esperamos que te diviertas, sonrías y disfrutes cada momento del juego 🐶🐹✨ Alexis estará aquí para animarte y darte ánimos durante la partida.</p>
+        <button id="startBtn" class="btn primary">Comenzar</button>
+      </div>
+    </div>
+
+    <div class="status">
+      <div class="score" aria-live="polite">
+        <div style="font-size:0.85rem">Puntaje</div>
+        <div class="value" id="score">0</div>
+        <div style="font-size:0.85rem; color:var(--muted)">/ 10</div>
+      </div>
+      <div class="progress" id="progress" aria-hidden="true">
+        <!-- 10 segments -->
+        <div class="seg" data-index="0"></div>
+        <div class="seg" data-index="1"></div>
+        <div class="seg" data-index="2"></div>
+        <div class="seg" data-index="3"></div>
+        <div class="seg" data-index="4"></div>
+        <div class="seg" data-index="5"></div>
+        <div class="seg" data-index="6"></div>
+        <div class="seg" data-index="7"></div>
+        <div class="seg" data-index="8"></div>
+        <div class="seg" data-index="9"></div>
+      </div>
+    </div>
+
+    <section class="card" id="card" aria-live="polite">
+      <div class="meta">
+        <div class="qnum" id="qnum">Pregunta 1 / 10</div>
+        <div class="help-row">
+          <div class="pet-chat" id="petMessage">Botton y Bao te desean suerte 💕</div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      </div>
+
+      <div class="question" id="question">Cargando pregunta…</div>
+
+      <div class="choices" id="choices" role="list">
+      </div>
+
+      <div class="buttons">
+        <button id="nextBtn" class="btn ghost small" disabled>Siguiente</button>
+        <button id="restart" class="btn small" style="display:none">Reiniciar</button>
+        <div style="margin-left:auto; display:flex; gap:8px; align-items:center">
+          <label class="sound-toggle">Sonidos
+            <input type="checkbox" id="soundToggle" checked>
+          </label>
+        </div>
+      </div>
+
+      <div class="result" id="result" style="display:none;"></div>
+    </section>
+
+    <footer>
+      <div>¡Hecho con mucho cariño para <strong>Lauluphine</strong>! 💗</div>
+    </footer>
+  </main>
+
+  <!-- Toasts and Score popup -->
+  <div id="toasts" aria-live="polite" class="toasts"></div>
+  <div id="scorePopup" class="score-popup" aria-hidden="true"></div>
+
+  <!-- Alexis modal (regalo) -->
+  <div id="alexisModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-title">Alexis te quiere mucho 💖</div>
+      <div class="modal-sub" id="alexisModalScore" style="margin-top:8px; color:var(--muted)">Puntaje: 0 / 10</div>
+      <button id="giftBtn" class="gift-btn">🎁 Abrir regalo</button>
+    </div>
+  </div>
+
+  <!-- Overlay de victoria gigante -->
+  <div id="winOverlay" class="overlay-win" aria-hidden="true">
+    <div class="win-card">
+      <div class="win-title">¡GANASTE TODOS LOS PUNTOS! 🎉</div>
+      <div class="win-sub">Bao, Botton y Alexis celebran contigo</div>
+      <div class="win-score" id="winScore" style="font-weight:700; margin-top:6px">Puntaje: 10 / 10</div>
+      <div class="win-msg" id="winMsg" style="margin-top:8px; color:var(--muted)">De parte de Alexis, Botton y Bao:<br>Gracias por compartir este momento con nosotros.<br>Eres una persona única, especial y muy valiosa.<br>Mereces amor, sonrisas y que la vida te consienta un poquito más cada día.<br>Te queremos mucho 🐶🐹💗</div>
+      <div class="win-characters">
+        <div class="win-pet-wrap">
+          <img src="assets/img/botton.jpg" class="win-pet botton" alt="Botton">
+          <div class="pet-sparkles"></div>
+        </div>
+        <div class="win-pet-wrap">
+          <img src="assets/img/bao.jpg" class="win-pet bao" alt="Bao">
+          <div class="pet-sparkles"></div>
+        </div>
+        <div class="win-pet-wrap">
+          <img src="assets/img/alexis.jpg" class="win-pet alexis" alt="Alexis">
+          <div class="pet-sparkles"></div>
+        </div>
+      </div>
+      <button id="closeWin" class="btn">Cerrar</button>
+    </div>
+  </div>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
