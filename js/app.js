@@ -1,16 +1,62 @@
 ﻿// Quiz interactivo para Lauluphine — lógica + sonidos WebAudio
 let questions = [];
 const defaultQuestions = [
-  { q: "¿Qué tiene en común Nemo y el papá de Lau?", choices: ["Son difíciles de encontrar", "Nadie sabe dónde están", "Tema sensible", "No se puede encontrar a ninguno de los dos"], answer: 3, pet: "botton" },
-  { q: "Una mujer está embarazada de trillizas niñas, ¿qué tiene?", choices: ["Una linda familia", "Un hogar hermoso y duradero", "Un kit de limpieza", "Muchas deudas"], answer: 2, pet: "bao" },
-  { q: "Si se acaba la dictadura de Maduro ahora que fue preso, pasará lo siguiente:", choices: ["Subirá la propina de los rappis", "Ya no venderán dulces en los TransMilenios", "Colombia será un país mejor", "Todas las anteriores"], answer: 3 },
-  { q: "En una camioneta viaja un mexicano, un boliviano y un peruano, ¿quién maneja la camioneta?", choices: ["El oficial de migración", "Peruano", "Boliviano", "Mexicano"], answer: 0, pet: "botton" },
-  { q: "¿Cuál de estos es un accesorio kawaii perfecto para Lau?", choices: ["Delantal y Ollas", "Lazo rosa y vestidos", "Gafas oscuras", "Tacones"], answer: 0 },
-  { q: "Si pudieras describir a Lau en 3 palabras, ¿cuáles serían?", choices: ["Dulce · Única · Especial", "Fuerte · Auténtica · Brillante", "Encantadora · Inteligente · Inolvidable", "Racista · Xenófoba · Uribista"], answer: 3, pet: "bao" },
-  { q: "¿Qué haces cuando un epiléptico tiene un ataque mientras está en la bañera?", choices: ["Brindas los primeros auxilios", "Revisas su pulso y su estado de salud", "Echas la ropa y el jabón.", "No sé"], answer: 2 },
-  { q: "¿Cuál es la persona que más quiere en este mundo Lau?", choices: ["Leon S. Kennedy", "Sett", "Kayn", "Alexis"], answer: 3 },
-  { q: "Si estás en una partida y vas con un jungla que va 0-10 al minuto 8, ¿qué le dirías?", choices: ["Le doy ánimos para que se pueda remontar", "Le escribo manco de mierda y que los negros deben estar en un campo de algodón", "Me quedo callada", "uwu"], answer: 1 },
-  { q: "Si pudieras recibir un regalo el día de hoy, ¿qué sería?", choices: ["Iluminador y brillo Dior", "Perfume caro", "Cosplay nuevo", "No más peruanos ni venecos en este mundo"], answer: 3 }
+  {
+    q: "💖 ¿Quién es el crush número uno e indiscutible de Lauluphine?",
+    choices: ["Chris Redfield", "Leon S. Kennedy", "Kayn", "Sett"],
+    answer: 1,
+    pet: "botton"
+  },
+  {
+    q: "🎤 ¿Cuál es el personaje favorito de Lau en League of Legends?",
+    choices: ["Ahri", "Jinx", "Seraphine", "Lux"],
+    answer: 2,
+    pet: "bao"
+  },
+  {
+    q: "🎂 ¿Cuántos años tiene actualmente Lauluphine?",
+    choices: ["23 años", "24 años", "25 años", "26 años"],
+    answer: 2
+  },
+  {
+    q: "🎮 ¿Cuál fue el primer videojuego que streameó Lauluphine?",
+    choices: ["Resident Evil", "League of Legends", "Valorant", "Silent Hill"],
+    answer: 1,
+    pet: "botton"
+  },
+  {
+    q: "🤔 ¿Cuál de estos juegos NUNCA ha streameado Lau?",
+    choices: ["Resident Evil", "League of Legends", "Fortnite", "Valorant"],
+    answer: 2
+  },
+  {
+    q: "😅 ¿Qué juego solo apareció una vez en el stream y luego desapareció para siempre?",
+    choices: ["Silent Hill", "Poppy Playtime", "Resident Evil Village", "League of Legends"],
+    answer: 1,
+    pet: "bao"
+  },
+  {
+    q: "👑 ¿Cuál es el personaje femenino favorito de Lauluphine?",
+    choices: ["Ada Wong", "Claire Redfield", "Ashley Graham", "Jill Valentine"],
+    answer: 2
+  },
+  {
+    q: "❤️ Si Lau tuviera que elegir un solo juego para jugar toda la vida, ¿cuál sería?",
+    choices: ["League of Legends", "Resident Evil", "Silent Hill", "Valorant"],
+    answer: 1,
+    pet: "botton"
+  },
+  {
+    q: "🎉 ¿En qué fecha celebra su cumpleaños Lauluphine?",
+    choices: ["14 de febrero", "27 de septiembre", "31 de octubre", "24 de diciembre"],
+    answer: 1
+  },
+  {
+    q: "🧟 ¿Cuál es el Resident Evil favorito de Lau?",
+    choices: ["Resident Evil 4", "Resident Evil Village", "Resident Evil 2", "Resident Evil 7"],
+    answer: 2,
+    pet: "bao"
+  }
 ];
 
 let current = 0;
@@ -223,7 +269,7 @@ function showAlexisModal(){
   const modal = document.getElementById('alexisModal');
   if(!modal) return;
   modal.setAttribute('aria-hidden','false');
-  showToast('Alexis te quiere mucho 💖', 'both', 'success', 2600);
+  showToast('El chat te quiere mucho 💖', 'both', 'success', 2600);
 }
 
 // Manejo del regalo (abrir)
@@ -238,10 +284,10 @@ giftBtn && giftBtn.addEventListener('click', ()=>{
   if(overlay){
     // set the win overlay score and custom message
     const ws = overlay.querySelector('#winScore'); if(ws) ws.textContent = `Puntaje: ${score} / ${total}`;
-    const wm = overlay.querySelector('#winMsg'); if(wm) wm.innerHTML = 'De parte de Alexis, Botton y Bao:<br>Gracias por compartir este momento con nosotros.<br>Eres una persona única, especial y muy valiosa.<br>Mereces amor, sonrisas y que la vida te consienta un poquito más cada día.<br>Te queremos mucho 🐶🐹💗';
+    const wm = overlay.querySelector('#winMsg'); if(wm) wm.innerHTML = 'De parte de el chat, Botton y Bao:<br>Gracias por compartir este momento con nosotros.<br>Eres una persona única, especial y muy valiosa.<br>Mereces amor, sonrisas y que la vida te consienta un poquito más cada día.<br>Te queremos mucho 🐶🐹💗';
     overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false'); const pets = overlay.querySelectorAll('.win-pet'); pets.forEach(el=> el.classList.add('celebrate')); petVictoryAnimation();
   }
-  showToast('¡Alexis te regaló todos los puntos! 🎁', 'both', 'success');
+  showToast('¡El chat te regaló todos los puntos! 🎁', 'both', 'success');
 });
 
 // Cerrar overlay de victoria
@@ -276,7 +322,7 @@ function showResults(){
       if(prompt){ prompt.style.display='block'; prompt.textContent = '¿Quieres una ayuda? ¡Abrazalo!'; }
       showToast('¿Quieres una ayuda? Abrazalo para una sorpresa 💝', 'both', 'encourage', 3000);
       hugCount = 0;
-      const label = alexisBtn && alexisBtn.querySelector('.alexis-label'); if(label) label.textContent = 'Abrazar a Alexis';
+      const label = alexisBtn && alexisBtn.querySelector('.alexis-label'); if(label) label.textContent = 'Abrazar a El chat';
     }
   }, 600);
 }
