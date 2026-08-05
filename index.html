@@ -51,6 +51,20 @@
   </style>
 </head>
 <body>
+
+  <audio id="bgMusic" loop>
+    <source src="assets/sounds/fondo.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0.1;
+
+document.addEventListener("click", () => {
+    bgMusic.play();
+}, { once: true });
+</script>
+
   <main class="wrap" role="main" aria-labelledby="title">
     <header>
       <div>
